@@ -57,7 +57,7 @@ public class DataReader {
                     }
                     // create an instance of Shape(Polygon)
                     list.add(new Shape(vertice, r, g, b));
-                } // TODO: write conditions for transform line
+                }
                 else if (data[0].equals("t")) {
                     list.get(list.size() - 1).translate(Float.parseFloat(data[1]),
                                                         Float.parseFloat(data[2]));

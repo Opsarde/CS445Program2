@@ -37,7 +37,7 @@ public class Matrix {
 
     }
 
-    public Matrix dotProduct(Matrix other) {
+    public Matrix multiply(Matrix other) {
         Matrix result = new Matrix(row, other.col);
         for (int i = 0; i < row; ++i) {
             for (int j = 0; j < other.col; ++j) {
@@ -46,6 +46,8 @@ public class Matrix {
                 }
             }
         }
+        result.values[0][0] = Math.round(result.values[0][0]);
+        result.values[1][0] = Math.round(result.values[1][0]);
         return result;
     }
 

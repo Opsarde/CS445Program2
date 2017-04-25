@@ -28,7 +28,7 @@ public interface Polygon {
     /**
      * PURPOSE: fill this polygon with color information given
      */
-    public void fill(float r, float g, float b, float a);
+    public void fill();
 
     /**
      * PURPOSE: transform this polygon

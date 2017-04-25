@@ -21,8 +21,8 @@ import static org.lwjgl.opengl.GL11.*;
  * @author shun7817
  */
 public class Line {
-    private Point p1;
-    private Point p2;
+    public Point p1;
+    public Point p2;
     
     /**
      * PURPOSE: Initialize Line object with given points

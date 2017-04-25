@@ -5,9 +5,13 @@
  */
 package cs445program2;
 
+import static org.lwjgl.opengl.GL11.*;
+
 import java.util.List;
 import java.util.ArrayList;
-import static org.lwjgl.opengl.GL11.*;
+import java.util.Stack;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  *
@@ -17,23 +21,20 @@ public class Shape implements Polygon {
 
     //private Vertice[] verticeTable;
     private List<Vertice> verticeTable;
+    private List<Edge> edges;
+    
     private float r, g, b;
 
     public Shape(List<Vertice> vertice, float r, float g, float b) {
         //verticeTable = vertice;
         verticeTable = new ArrayList<>();
+        edges = new ArrayList<>();
         for (Vertice v : vertice) {
             verticeTable.add(new Vertice(v.x, v.y));
         }
         this.r = r;
         this.g = g;
         this.b = b;
-    }
-
-    @Override
-    public void draw() {
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-        glColor3f(r, g, b);
         for (int i = 0; i != verticeTable.size(); ++i) {
             Edge e;
             if (i == verticeTable.size() - 1) {
@@ -41,13 +42,83 @@ public class Shape implements Polygon {
             } else {
                 e = new Edge(verticeTable.get(i), verticeTable.get(i + 1));
             }
-            e.draw();
+            edges.add(e);
         }
     }
 
     @Override
-    public void fill(float r, float g, float b, float a) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void draw() {
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        glColor3f(r, g, b);
+        for (Edge e : edges)
+            e.draw();
+    }
+
+    /**
+     * Method: fill
+     * Purpose: When this method gets called, an object of Shape will
+     * use the scanline fill algorithm to fill itself.  
+     * Each entry in table has [0]: y-min, [1]: y-max, [2]: x-val, and
+     * [3]: 1 / m
+     */
+    @Override
+    public void fill() {
+        //List<float[]> edgeTable = new ArrayList<>();
+        List<float[]> globalTable = new ArrayList<>();
+        List<float[]> activeTable = new ArrayList<>();
+        int parity = 0;
+        // Initialize all edges in edge_table
+        for (Edge e : edges) {
+            float[] array = new float[4];
+            array[0] = yMin(e.p1, e.p2);
+            array[1] = yMax(e.p1, e.p2);
+            array[2] = xVal(e.p1, e.p2);
+            array[3] = slope(e.p1, e.p2);
+           // edgeTable.add(array);
+            if (Float.isFinite(array[3]))
+                globalTable.add(array);
+        }
+       // if (!edgeTable.isEmpty() && Float.isFinite(edgeTable.get(0)[3]))
+       //     globalTable.add(edgeTable.get(0));
+       // for (float[] e : edgeTable) {
+       //     if (Float.isInfinite(e[3]))
+       //         continue;
+       //     int index = 0;
+       //     if (e[0] > globalTable.get(index)[0])
+       //         ++index;
+       // }
+        sortGlobal(globalTable);
+
+        // Using stack can be easier to do the algorithm
+        Stack<float[]> globalTableStack = new Stack<>();
+        Stack<float[]> activeTableStack = new Stack<>();
+
+        while (!globalTable.isEmpty()) {
+            globalTableStack.add(globalTable.remove(globalTable.size() - 1));
+        }
+
+        while (!globalTableStack.isEmpty()) {
+            
+        }
+        float scanLine = globalTable.get(0)[0];
+
+        // while global table is not empty
+        while (!globalTable.isEmpty() && globalTable.get(0)[0] <= scanLine) {
+            activeTable.add(globalTable.remove(0));
+        }
+        
+        while (activeTable.isEmpty()) {
+            for (int i = 0; i < activeTable.size(); ++i) {
+                if (scanLine >= activeTable.get(i)[1]) {
+                    // remove the entry here
+                    activeTable.remove(i);
+                    --i;
+                }
+                
+            }
+                ++scanLine;
+        }
+
     }
 
     @Override
@@ -82,9 +153,46 @@ public class Shape implements Polygon {
             float[][] array1 = {{v.x}, {v.y}, {1}};
             Matrix s = new Matrix(array1, 3, 1);
             Matrix basis = new Matrix(array, 3, 3);
-            Matrix derivS = basis.dotProduct(s);
+            Matrix derivS = basis.multiply(s);
             v.x = derivS.getValue(0, 0);
             v.y = derivS.getValue(1, 0);
         }
+    }
+
+    private float yMin(Point p1, Point p2) {
+        return (p1.y < p2.y) ? p1.y : p2.y;
+    }
+
+    private float yMax(Point p1, Point p2) {
+        return (p1.y > p2.y) ? p1.y : p2.y;
+    }
+
+    private float xVal(Point p1, Point p2) {
+        return (p1.y <= p2.y) ? p1.x : p2.x;
+    }
+
+    private float slope(Point p1, Point p2) {
+        return (p2.x - p1.x) / (p2.y - p1.y);
+    }
+
+    private void sortGlobal(List<float[]> list) {
+        Collections.sort(list, new Comparator<float[]>() {
+            @Override
+            public int compare(float[] o1, float[] o2) {
+                int c = 0;
+                if (o1[0] < o2[0])
+                    c = -1;
+                else if (o1[0] > o2[0])
+                    c = 1;
+                if (c == 0) {
+                    if (o1[2] < o2[2])
+                        c = -1;
+                    else if (o1[2] < o2[2])
+                        c = 1;
+                }
+                return c;
+            }
+        });
+
     }
 }

@@ -79,14 +79,15 @@ public class Main {
      * PURPOSE: render every frame until window is closed or press escape key
      */
     private void render() {
-        DataReader reader = new DataReader(filePath);
-        List<Polygon> list = reader.getData();
         while (!Display.isCloseRequested() && !Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
+            DataReader reader = new DataReader(filePath);
+            List<Polygon> list = reader.getData();
             try {
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                 glLoadIdentity();
                 for (Polygon s: list) {
                     s.draw();
+                    // s.fill();
                 }
                 Display.update();
                 Display.sync(60);

@@ -19,9 +19,9 @@ package cs445program2;
  * @author shun7817
  */
 public class Edge extends Line{
-    
+
     public Edge(Vertice p1, Vertice p2) {
-        super(p1, p2);
+        super(p1, p2); 
     }
     
 }
