@@ -103,6 +103,7 @@ public class Shape implements Polygon {
             drawScanline(scanLine, activeTable);
             // remove fnished entry
             ++scanLine;
+            sortActive(activeTable);
             for (int i = 0; i < activeTable.size(); ++i) {
                 activeTable.get(i)[2] += activeTable.get(i)[3];
                 if (scanLine == activeTable.get(i)[1]) {
@@ -111,7 +112,7 @@ public class Shape implements Polygon {
                     --i;
                 }
             }
-        }
+       }
     }
 
     @Override
@@ -212,12 +213,10 @@ public class Shape implements Polygon {
             if (++parity % 2 == 1) {
                 //draw from table.get(i)[2] until next i
                 currentPixel = Math.round(table.get(i)[2]);
-                endPixel = Math.round(table.get(i)[2]);
-                if (i < table.size() - 1);
-                    endPixel = Math.round(table.get(i + 1)[2]);
-                while (currentPixel < endPixel) {
+                endPixel = Math.round(table.get(i + 1)[2]);
+                while (++currentPixel < endPixel) {
                     glVertex2f(currentPixel, scanLine);
-                    currentPixel += 1;
+                    // currentPixel += 1;
                 }
             }
         }
