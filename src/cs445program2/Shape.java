@@ -66,7 +66,6 @@ public class Shape implements Polygon {
         //List<float[]> edgeTable = new ArrayList<>();
         List<float[]> globalTable = new ArrayList<>();
         List<float[]> activeTable = new ArrayList<>();
-        int parity = 0;
         // Initialize all edges in edge_table
         for (Edge e : edges) {
             float[] array = new float[4];
@@ -75,8 +74,10 @@ public class Shape implements Polygon {
             array[2] = xVal(e.p1, e.p2);
             array[3] = slope(e.p1, e.p2);
            // edgeTable.add(array);
-            if (Float.isFinite(array[3]))
+            if (Float.isFinite(array[3])) {
                 globalTable.add(array);
+                sortGlobal(globalTable);
+            }
         }
        // if (!edgeTable.isEmpty() && Float.isFinite(edgeTable.get(0)[3]))
        //     globalTable.add(edgeTable.get(0));
@@ -87,38 +88,30 @@ public class Shape implements Polygon {
        //     if (e[0] > globalTable.get(index)[0])
        //         ++index;
        // }
-        sortGlobal(globalTable);
 
-        // Using stack can be easier to do the algorithm
-        Stack<float[]> globalTableStack = new Stack<>();
-        Stack<float[]> activeTableStack = new Stack<>();
-
-        while (!globalTable.isEmpty()) {
-            globalTableStack.add(globalTable.remove(globalTable.size() - 1));
-        }
-
-        while (!globalTableStack.isEmpty()) {
-            
-        }
         float scanLine = globalTable.get(0)[0];
-
-        // while global table is not empty
-        while (!globalTable.isEmpty() && globalTable.get(0)[0] <= scanLine) {
-            activeTable.add(globalTable.remove(0));
-        }
-        
-        while (activeTable.isEmpty()) {
+        // Loop until both Table are empty
+        while (!globalTable.isEmpty() || !activeTable.isEmpty()) {
+            // remove the top each time true
+            // until top y-min is greater than scanline
+            while (!globalTable.isEmpty() && globalTable.get(0)[0] <= scanLine) {
+                activeTable.add(globalTable.remove(0));
+                sortActive(activeTable);
+            }
+            // current active_table
+            // what to do? 
+            drawScanline(scanLine, activeTable);
+            // remove fnished entry
+            ++scanLine;
             for (int i = 0; i < activeTable.size(); ++i) {
-                if (scanLine >= activeTable.get(i)[1]) {
+                activeTable.get(i)[2] += activeTable.get(i)[3];
+                if (scanLine == activeTable.get(i)[1]) {
                     // remove the entry here
                     activeTable.remove(i);
                     --i;
                 }
-                
             }
-                ++scanLine;
         }
-
     }
 
     @Override
@@ -193,6 +186,41 @@ public class Shape implements Polygon {
                 return c;
             }
         });
+    }
 
+    private void sortActive(List<float[]> list) {
+        Collections.sort(list, new Comparator<float[]>() {
+            @Override
+            public int compare(float[] o1, float[] o2) {
+                int c = 0;
+                if (o1[2] < o2[2])
+                    c = -1;
+                else if (o1[2] > o2[2])
+                    c = 1;
+                return c;
+            }
+        });
+    }
+
+    private void drawScanline(float scanLine, List<float[]> table) {
+        int parity = 0;
+        float currentPixel = 0;
+        float endPixel = 0;
+        glColor3f(r, g, b);
+        glBegin(GL_POINTS);
+        for (int i = 0; i < table.size(); ++i) {
+            if (++parity % 2 == 1) {
+                //draw from table.get(i)[2] until next i
+                currentPixel = Math.round(table.get(i)[2]);
+                endPixel = Math.round(table.get(i)[2]);
+                if (i < table.size() - 1);
+                    endPixel = Math.round(table.get(i + 1)[2]);
+                while (currentPixel < endPixel) {
+                    glVertex2f(currentPixel, scanLine);
+                    currentPixel += 1;
+                }
+            }
+        }
+        glEnd();
     }
 }

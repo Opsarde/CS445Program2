@@ -72,10 +72,8 @@ public class DataReader {
                                                     Float.parseFloat(data[2]),
                                                     Float.parseFloat(data[3]),
                                                     Float.parseFloat(data[4]));
-                } // Vertice pair (Edge)
-                // Tranformation header
-                // move, rotate, scale
-                else // if no header, it is a vertice pair
+                }
+                else
                 {
                     System.out.println("Provided shape is not provided. PASS.");
                 }
