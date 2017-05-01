@@ -9,7 +9,6 @@ import static org.lwjgl.opengl.GL11.*;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Stack;
 import java.util.Collections;
 import java.util.Comparator;
 
@@ -19,14 +18,12 @@ import java.util.Comparator;
  */
 public class Shape implements Polygon {
 
-    //private Vertice[] verticeTable;
     private List<Vertice> verticeTable;
     private List<Edge> edges;
     
     private float r, g, b;
 
     public Shape(List<Vertice> vertice, float r, float g, float b) {
-        //verticeTable = vertice;
         verticeTable = new ArrayList<>();
         edges = new ArrayList<>();
         for (Vertice v : vertice) {
@@ -63,10 +60,9 @@ public class Shape implements Polygon {
      */
     @Override
     public void fill() {
-        //List<float[]> edgeTable = new ArrayList<>();
         List<float[]> globalTable = new ArrayList<>();
         List<float[]> activeTable = new ArrayList<>();
-        // Initialize all edges in edge_table
+        // Initialize all edges in global_table
         for (Edge e : edges) {
             float[] array = new float[4];
             array[0] = yMin(e.p1, e.p2);
@@ -79,15 +75,6 @@ public class Shape implements Polygon {
                 sortGlobal(globalTable);
             }
         }
-       // if (!edgeTable.isEmpty() && Float.isFinite(edgeTable.get(0)[3]))
-       //     globalTable.add(edgeTable.get(0));
-       // for (float[] e : edgeTable) {
-       //     if (Float.isInfinite(e[3]))
-       //         continue;
-       //     int index = 0;
-       //     if (e[0] > globalTable.get(index)[0])
-       //         ++index;
-       // }
 
         float scanLine = globalTable.get(0)[0];
         // Loop until both Table are empty
@@ -98,10 +85,8 @@ public class Shape implements Polygon {
                 activeTable.add(globalTable.remove(0));
                 sortActive(activeTable);
             }
-            // current active_table
-            // what to do? 
             drawScanline(scanLine, activeTable);
-            // remove fnished entry
+            // remove fnished entry and sort
             ++scanLine;
             sortActive(activeTable);
             for (int i = 0; i < activeTable.size(); ++i) {
@@ -212,11 +197,11 @@ public class Shape implements Polygon {
         for (int i = 0; i < table.size(); ++i) {
             if (++parity % 2 == 1) {
                 //draw from table.get(i)[2] until next i
-                currentPixel = Math.round(table.get(i)[2]);
+                currentPixel = (table.get(i)[2]);
+                // round endpixel so some little pixel gaps can be filled
                 endPixel = Math.round(table.get(i + 1)[2]);
                 while (++currentPixel < endPixel) {
                     glVertex2f(currentPixel, scanLine);
-                    // currentPixel += 1;
                 }
             }
         }
