@@ -1,8 +1,19 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+/*************************************************************
+ *     file: Shape.java
+ *     author: Shun Lu
+ *     class: CS 445 - Computer Graphics
+ * 
+ *     assignment: program 2
+ *     last modified: 4/30/2017
+ * 
+ *     purpose: This program reads coordinates.txt and draw polygon,
+ *     filled with desired color, then transform through given information,
+ *     for main algorithms, check DataReader.java, Shape.java, and 
+ *     Matrix.java. 
+ *     Line.java and Point.java are imported from first program.
+ *     Edge.java and Vertice.java inherit these two classes.
+ * 
+ *************************************************************/
 package cs445program2;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -13,8 +24,10 @@ import java.util.Collections;
 import java.util.Comparator;
 
 /**
- *
- * @author shun7817
+ * This Shape class contains a vertex and a edge table.
+ * It has draw and fill methods.
+ * 
+ * @author Shun Lu
  */
 public class Shape implements Polygon {
 
@@ -22,7 +35,10 @@ public class Shape implements Polygon {
     private List<Edge> edges;
     
     private float r, g, b;
-
+    /**
+     * Constructor: Shape
+     * Purpose: initialize two tables and rgb value for a shape.
+     */
     public Shape(List<Vertice> vertice, float r, float g, float b) {
         verticeTable = new ArrayList<>();
         edges = new ArrayList<>();
@@ -43,6 +59,10 @@ public class Shape implements Polygon {
         }
     }
 
+    /**
+     * Method: draw
+     * Purpose: draw the outline of a shape
+     */
     @Override
     public void draw() {
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -99,7 +119,11 @@ public class Shape implements Polygon {
             }
        }
     }
-
+    
+    /**
+     * Method: translate
+     * Purpose: translate the shape by dx and dy
+     */
     @Override
     public void translate(float dx, float dy) {
         // Change verticeTable values
@@ -108,7 +132,11 @@ public class Shape implements Polygon {
                             {0, 0, 1}};
         calculateTransformation(array2);
     }
-
+    
+    /**
+     * Method: Rotate
+     * Purpose: rotate the shape by angle, assume rotate by origin
+     */
     @Override
     public void rotate(float angle, float px, float py) {
         // Assume all pivot points in this project are at origin
@@ -118,7 +146,11 @@ public class Shape implements Polygon {
                             {0, 0, 1}};
         calculateTransformation(array2);
     }
-
+    
+    /**
+     * Method: Scale
+     * Purpose: scale the shape by Sx and Sy, assume scale by origin
+     */
     @Override
     public void scale(float scaleX, float scaleY, float px, float py) {
         float[][] array2 = {{scaleX, 0, 0},
@@ -127,6 +159,8 @@ public class Shape implements Polygon {
         calculateTransformation(array2);
     }
 
+    // Method: calculateTransformation
+    // Purpose: Private method for calculating the transformation
     private void calculateTransformation(float[][] array) {
         for (Vertice v : verticeTable) {
             float[][] array1 = {{v.x}, {v.y}, {1}};
@@ -138,22 +172,32 @@ public class Shape implements Polygon {
         }
     }
 
+    // Method: yMin
+    // Purpose: private method to get yMin
     private float yMin(Point p1, Point p2) {
         return (p1.y < p2.y) ? p1.y : p2.y;
     }
-
+    
+    // Method: yMax
+    // Purpose: private method to get yMax
     private float yMax(Point p1, Point p2) {
         return (p1.y > p2.y) ? p1.y : p2.y;
     }
 
+    // Method: xVal
+    // Purpose: private method to get xVal
     private float xVal(Point p1, Point p2) {
         return (p1.y <= p2.y) ? p1.x : p2.x;
     }
 
+    // Method: slope
+    // Purpose: private method to get slope
     private float slope(Point p1, Point p2) {
         return (p2.x - p1.x) / (p2.y - p1.y);
     }
 
+    // Method: sortGlobal
+    // Purpose: sort globaltable based on y-min and x-val
     private void sortGlobal(List<float[]> list) {
         Collections.sort(list, new Comparator<float[]>() {
             @Override
@@ -174,6 +218,8 @@ public class Shape implements Polygon {
         });
     }
 
+    // Method: sortActive
+    // Purpose: sort active_table based on x-val
     private void sortActive(List<float[]> list) {
         Collections.sort(list, new Comparator<float[]>() {
             @Override
@@ -188,6 +234,8 @@ public class Shape implements Polygon {
         });
     }
 
+    // Method: drawScanline
+    // Purpose: draw the line based on scanline algorithm
     private void drawScanline(float scanLine, List<float[]> table) {
         int parity = 0;
         float currentPixel = 0;

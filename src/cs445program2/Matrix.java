@@ -1,19 +1,35 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+/*************************************************************
+ *     file: Matrix.java
+ *     author: Shun Lu
+ *     class: CS 445 - Computer Graphics
+ * 
+ *     assignment: program 2
+ *     last modified: 4/30/2017
+ * 
+ *     purpose: This program reads coordinates.txt and draw polygon,
+ *     filled with desired color, then transform through given information,
+ *     for main algorithms, check DataReader.java, Shape.java, and 
+ *     Matrix.java. 
+ *     Line.java and Point.java are imported from first program.
+ *     Edge.java and Vertice.java inherit these two classes.
+ * 
+ *************************************************************/
 package cs445program2;
 
 /**
- *
- * @author shun7817
+ * This class Matrix stores a 2D array and perform simple multiplication
+ * 
+ * @author Shun Lu
  */
 public class Matrix {
     private int row;
     private int col;
     private float[][] values;
 
+    /**
+     * Constructor: Matrix
+     * Purpose: accept row and col number to initialize an empty matrix
+     */
     public Matrix(int row, int col) {
         this.row = row;
         this.col = col;
@@ -24,7 +40,11 @@ public class Matrix {
             }
         }
     }
-
+    
+    /**
+     * Constructor: Matrix
+     * Purpose: a simple copy constructor for Matrix
+     */
     public Matrix(float[][] array, int row, int col) {
         this.row = row;
         this.col = col;
@@ -36,7 +56,11 @@ public class Matrix {
         }
 
     }
-
+    
+    /**
+     * Method:multiply
+     * Purpose: perform a simple matrix multiplication
+     */
     public Matrix multiply(Matrix other) {
         Matrix result = new Matrix(row, other.col);
         for (int i = 0; i < row; ++i) {
@@ -51,6 +75,10 @@ public class Matrix {
         return result;
     }
 
+    /**
+     * Method:getValue
+     * Purpose: get the value located at row i and column j
+     */
     public float getValue(int i, int j) {
         return values[i][j];
     }

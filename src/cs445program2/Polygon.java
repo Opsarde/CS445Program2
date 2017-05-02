@@ -1,27 +1,31 @@
 /*************************************************************
- *     file: Shape.java
+ *     file: Polygon.java
  *     author: Shun Lu
  *     class: CS 445 - Computer Graphics
  * 
- *     assignment: program 1
- *     last modified: 4/10/2017
+ *     assignment: program 2
+ *     last modified: 4/30/2017
  * 
- *     purpose: This program reads coordinates.txt and draw line,
- *     circle, and ellipse on a window using OpenGL
+ *     purpose: This program reads coordinates.txt and draw polygon,
+ *     filled with desired color, then transform through given information,
+ *     for main algorithms, check DataReader.java, Shape.java, and 
+ *     Matrix.java. 
+ *     Line.java and Point.java are imported from first program.
+ *     Edge.java and Vertice.java inherit these two classes.
  * 
  *************************************************************/
 package cs445program2;
 
 /**
- * INTERFACE: Shape
- * PURPOSE: each shape should have a draw and toString method
+ * INTERFACE: Polygon
+ * PURPOSE: Some basic operation for drawing and filling a polygon
  * 
  * @author Shun Lu
  */
 public interface Polygon {
 
     /**
-     * PURPOSE: draw this shape on GL projection matrix
+     * PURPOSE: draw this polygon on GL projection matrix
      */
     public void draw(); 
 

@@ -3,11 +3,15 @@
  *     author: Shun Lu
  *     class: CS 445 - Computer Graphics
  * 
- *     assignment: program 1
- *     last modified: 4/10/2017
+ *     assignment: program 2
+ *     last modified: 4/30/2017
  * 
- *     purpose: This program reads coordinates.txt and draw line,
- *     circle, and ellipse on a window using OpenGL
+ *     purpose: This program reads coordinates.txt and draw polygon,
+ *     filled with desired color, then transform through given information,
+ *     for main algorithms, check DataReader.java, Shape.java, and 
+ *     Matrix.java. 
+ *     Line.java and Point.java are imported from first program.
+ *     Edge.java and Vertice.java inherit these two classes.
  * 
  *************************************************************/
 package cs445program2;
@@ -24,11 +28,7 @@ import java.io.*;
  */
 public class DataReader {
 
-    //private ArrayList<Shape> list;
     private List<Polygon> list;
-
-    // How about one polygon for each iteration of datareader
-    // along with its transform data?
     
     /**
      * This constructor constructs data read from txt
@@ -39,8 +39,6 @@ public class DataReader {
             BufferedReader reader = new BufferedReader(new FileReader(filePath));
             String line;
             while ((line = reader.readLine()) != null) {
-                // Color information abut a polygon
-
                 String[] data = line.split(" ");
                 // This read "P" header in a txt file
                 // This line should be color information
